@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TriadPlanReview",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdict", "summary", "gaps", "resolved_previous"],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["approved", "gaps"],
+      "description": "approved only when you would sign off on executing this plan as written."
+    },
+    "summary": {
+      "type": "string",
+      "description": "Two to four sentences: overall assessment of the plan."
+    },
+    "gaps": {
+      "type": "array",
+      "description": "Every gap that must be closed before execution. Empty when verdict is approved.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "area", "description", "suggested_fix"],
+        "properties": {
+          "id": { "type": "string", "description": "Stable id, e.g. G1, G2. Reuse the same id when re-raising a previous gap." },
+          "severity": { "type": "string", "enum": ["blocker", "major", "minor"] },
+          "area": { "type": "string", "description": "Plan section or step the gap belongs to." },
+          "description": { "type": "string", "description": "What is missing, wrong, or untestable, with evidence from the repo when available." },
+          "suggested_fix": { "type": "string", "description": "Concrete change to the plan that would close the gap." }
+        }
+      }
+    },
+    "resolved_previous": {
+      "type": "array",
+      "description": "One entry per gap from the previous round. Empty on the first round.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "resolved", "note"],
+        "properties": {
+          "id": { "type": "string" },
+          "resolved": { "type": "boolean", "description": "true when the plan now closes it or the author's disagreement is accepted." },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

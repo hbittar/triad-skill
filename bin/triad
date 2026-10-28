@@ -1,0 +1,8 @@
+#!/bin/sh
+# Launch Claude Code as Fable with the /triad skill on the given task, from any project directory.
+# Usage: triad "describe the task"
+if [ $# -eq 0 ]; then
+  echo "usage: triad <task description>" >&2
+  exit 2
+fi
+exec claude --model fable "/triad $*"
