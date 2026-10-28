@@ -30,7 +30,7 @@ reviewer and implementer disagree twice on the same item.
 ## Install
 
 ```bash
-git clone <this repo> triad-skill
+git clone https://github.com/hbittar/triad-skill.git
 cd triad-skill && ./install.sh
 ```
 
