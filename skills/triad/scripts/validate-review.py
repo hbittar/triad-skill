@@ -61,6 +61,26 @@ def check(review, previous, schema):
         require(item["line"] >= 0, "finding line must be nonnegative")
 
 
+def check_council(review, schema, id_prefix):
+    """Council seats are scored independently each round; no cross-round coverage."""
+    validate(review, schema)
+    score = review["score"]
+    require(1 <= score <= 10, "score must be an integer from 1 to 10")
+    findings = review["findings"]
+    ids(findings)
+    require(bool(id_prefix), "council review needs an id prefix argument")
+    for item in findings:
+        require(item["id"].startswith(id_prefix) and item["id"][len(id_prefix):].isdigit(),
+                f"{item['id']}: council finding ids must be {id_prefix}<n>")
+        require(item["line"] >= 0, "finding line must be nonnegative")
+    if score < 9:
+        require(bool(findings), "a score below 9 needs at least one finding")
+    else:
+        require(review["fits_request"] == "yes", "a score of 9 or more needs fits_request=yes")
+        require(all(item["severity"] == "minor" for item in findings),
+                "a score of 9 or more allows only minor findings")
+
+
 def read(path):
     with open(path, encoding="utf-8") as source:
         return json.load(source)
@@ -68,8 +88,13 @@ def read(path):
 
 if __name__ == "__main__":
     try:
-        schema_path, output_path, previous_path = sys.argv[1:]
-        check(read(output_path), read(previous_path) if previous_path else None,
-              read(schema_path))
+        args = sys.argv[1:]
+        require(len(args) in (3, 4), "usage: validate-review.py SCHEMA OUT PREV [ID_PREFIX]")
+        schema_path, output_path, previous_path = args[:3]
+        schema = read(schema_path)
+        if schema.get("title") == "TriadCouncilReview":
+            check_council(read(output_path), schema, args[3] if len(args) == 4 else "")
+        else:
+            check(read(output_path), read(previous_path) if previous_path else None, schema)
     except (ValueError, KeyError, OSError) as error:
         sys.exit(f"triad: invalid review: {error}")

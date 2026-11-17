@@ -1,8 +1,9 @@
 #!/bin/sh
-# Launch Claude Code as Fable with the /triad skill on the given task, from any project directory.
+# Launch Claude Code as Fable 5.2 (pinned) with the /triad skill on the given task, from any project directory.
+# If Fable is overloaded or not available, the session falls back to Opus (TRIAD_FALLBACK_MODEL to change).
 # Usage: triad "describe the task"
 if [ $# -eq 0 ]; then
   echo "usage: triad <task description>" >&2
   exit 2
 fi
-exec claude --model fable "/triad $*"
+exec claude --model claude-fable-5-2 --fallback-model "${TRIAD_FALLBACK_MODEL:-opus}" "/triad $*"

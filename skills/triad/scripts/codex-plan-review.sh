@@ -27,7 +27,8 @@ Rules
 - Cite evidence (file paths, existing functions) for every gap about the repo.
 - Do not pad: a plan that is genuinely ready gets verdict "approved" and an empty gaps list.
 - Severity: blocker = execution would fail or produce wrong behaviour; major = likely rework; minor = polish.
-- If a previous round is included, evaluate each previous gap and report it in resolved_previous. A "Reviewer disagreement" note in the plan is the author's counter-argument: mark resolved=true if you accept it, otherwise re-raise the gap with the same id.
+- If a previous round is included, resolved_previous must contain exactly one entry per OPEN previous gap, and nothing else. The open previous gaps are: every entry of the previous round's "gaps" array, plus every entry of the previous round's "resolved_previous" that has resolved=false. Do NOT include ids that the previous round already reported as resolved=true; they are closed and must not be mentioned again. A "Reviewer disagreement" note in the plan is the author's counter-argument: mark resolved=true if you accept it, otherwise re-raise the gap with the same id in "gaps" and resolved=false here.
+- New gaps get fresh ids that continue the numbering (never reuse an id from any earlier round).
 - verdict must be "approved" only when gaps is empty and every previous gap is resolved.
 - The only previous round is the PREVIOUS REVIEW ROUND section below, if present. Ignore any review JSON files you find on disk. When that section is absent this is round 1 and resolved_previous must be an empty array.
 - Respond only with JSON matching the provided schema.

@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TriadCouncilReview",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["score", "fits_request", "summary", "findings"],
+  "properties": {
+    "score": {
+      "type": "integer",
+      "description": "1 to 10: how well the delivered work fulfils the ORIGINAL REQUEST. 10 = nothing left to improve; 9 = fully meets the request, at most cosmetic nits; 7-8 = mostly there but with real gaps; 6 or less = significant problems or does not do what was asked."
+    },
+    "fits_request": {
+      "type": "string",
+      "enum": ["yes", "partially", "no"],
+      "description": "Does the result do what the original request asked for (not just what the plan says)?"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Two to four sentences justifying the score."
+    },
+    "findings": {
+      "type": "array",
+      "description": "What must change to bring the score to 9 or more. Required when score is below 9; may hold minor nits otherwise.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "file", "line", "description", "suggested_fix"],
+        "properties": {
+          "id": { "type": "string", "description": "The id prefix given in the prompt followed by a number, e.g. C2-A1, C2-A2." },
+          "severity": { "type": "string", "enum": ["blocker", "major", "minor"] },
+          "file": { "type": "string", "description": "Repo-relative path, or empty string when not file-specific." },
+          "line": { "type": "integer", "description": "1-based line in the new file, or 0 when not applicable." },
+          "description": { "type": "string" },
+          "suggested_fix": { "type": "string" }
+        }
+      }
+    }
+  }
+}
